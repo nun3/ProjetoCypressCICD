@@ -1,0 +1,63 @@
+npm install cypress --save-dev
+
+
+npx cypress open
+
+
+Certifique-se de que o Node.js esteja instalado.
+
+O Allure Cypress foi testado com Node.js 18 e versões superiores. Versões mais antigas podem funcionar, mas não podemos garantir isso.
+
+Certifique-se de que o Allure Report esteja instalado. Caso contrário, siga as instruções de instalação . Observe que o Allure Report requer Java.
+Instale o adaptador Allure Cypress.
+npm install --save-dev allure-cypress
+
+Na e2eseção do seu script de configuração do Cypress , defina uma setupNodeEvents()função que chama allureCypress(), conforme mostrado no exemplo.
+import { allureCypress } from "allure-cypress/reporter";
+export default {
+  e2e: {
+    setupNodeEvents(on, config) {
+      allureCypress(on, config, {
+        resultsDir: "allure-results",
+      });
+      return config;
+    },
+  },
+};
+
+No seu arquivo de suporte E2E , importe a biblioteca Allure Cypress.
+import "allure-cypress";
+
+
+/// <reference types="cypress" />
+
+import { attachment } from 'allure-js-commons';
+import { ContentType } from 'allure-js-commons';
+
+function anexarTexto(nome, conteudo) {
+  attachment(nome, conteudo, ContentType.TEXT);
+}
+
+function anexarImagem(nomeArquivo) {
+  const caminho = `cypress/screenshots/${Cypress.spec.name}/${nomeArquivo}.png`;
+
+  cy.screenshot(nomeArquivo).then(() => {
+    cy.readFile(caminho, 'base64').then((imgBase64) => {
+      attachment(nomeArquivo, Buffer.from(imgBase64, 'base64'), ContentType.PNG);
+    });
+  });
+}
+
+//aplicação 
+describe('example to-do app', () => {
+  beforeEach(() => {
+    cy.visit('https://example.cypress.io/todo');
+    anexarTexto('URL acessada', 'https://example.cypress.io/todo');
+    anexarImagem('01-home-page');
+  });
+
+
+
+  npx cypress run
+
+  npx allure serve allure-results
