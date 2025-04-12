@@ -1,18 +1,35 @@
 pipeline {
     agent any
 
+    environment {
+        HOME = '.'
+        CYPRESS_CACHE_FOLDER = './.cache/Cypress'
+    }
+
     stages {
-        stage('node.js dependencias') {
+        stage('Instalar dependências Node.js') {
             steps {
-                sh 'npm install'
+                echo 'Instalando dependências...'
+                sh 'npm ci'
             }
         }
-        stage('e2e') {
+
+        stage('Executar testes E2E com Cypress') {
             steps {
+                echo 'Executando testes E2E...'
                 sh 'npx cypress run'
             }
         }
-        
-        
+    }
+
+    post {
+        always {
+            echo 'Salvando artefatos dos testes...'
+            archiveArtifacts artifacts: 'cypress/videos/**/*.mp4', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'cypress/screenshots/**/*.png', allowEmptyArchive: true
+        }
+        failure {
+            echo 'Algum teste falhou. Verifique os relatórios de falha.'
+        }
     }
 }
