@@ -1,0 +1,18 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('node.js dependencias') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('e2e') {
+            steps {
+                sh 'npx cypress run'
+            }
+        }
+        
+        
+    }
+}
