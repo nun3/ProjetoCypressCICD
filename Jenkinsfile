@@ -13,6 +13,7 @@ pipeline {
             steps {
                 echo 'Executando testes Cypress...'
                 bat 'npx cypress run'
+                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             }
         }
     }
