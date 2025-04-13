@@ -12,7 +12,7 @@ pipeline {
         stage('Executar testes E2E com Cypress') {
             steps {
                 echo 'Executando testes Cypress...'
-                bat 'npx cypress run'
+                bat 'npx cypress run --headless'
                 allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             }
         }
